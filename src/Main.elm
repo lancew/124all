@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (..)
+import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Time
 
@@ -109,17 +110,20 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 []
+        [ h1
+            [ style "background-color"
+                (if model.status then
+                    "Green"
+
+                 else
+                    ""
+                )
+            ]
             [ text "1-2-4-All Timer" ]
-        , button [ onClick Start ] [ text "Start" ]
-        , button [ onClick Stop ] [ text "Stop" ]
+        , div [] (statusButtons model.status)
         , h2
             []
-            [ text (String.fromInt model.time) ]
-        , h3
-            []
             [ phaseText model.phase ]
-        , p [] [ text model.phase ]
         ]
 
 
@@ -178,6 +182,17 @@ phaseText phase =
 
         _ ->
             div [] [ p [] [ text "This should not ever be seen" ] ]
+
+
+statusButtons status =
+    case status of
+        True ->
+            [ button [ onClick Stop ] [ text "Stop" ]
+            ]
+
+        False ->
+            [ button [ onClick Start ] [ text "Start" ]
+            ]
 
 
 
