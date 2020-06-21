@@ -3,7 +3,6 @@ module Main exposing (main)
 import Browser
 import Html exposing (..)
 import Html.Events exposing (onClick)
-import Task
 import Time
 
 
@@ -28,18 +27,19 @@ type alias Model =
     { time : Int
     , status : Bool
     , message : String
+    , phase : String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { time = 0, status = False, message = """
-    1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute
-    2: Generate ideas in pairs, building on ideas from self-reflection. 2 minutes
-    4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes
-    All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes
+        1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute
+        2: Generate ideas in pairs, building on ideas from self-reflection. 2 minutes
+        4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes
+        All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes
 
-    """ }, Cmd.none )
+        """, phase = "Ready" }, Cmd.none )
 
 
 
@@ -61,23 +61,18 @@ update msg model =
         --     All
         Tick _ ->
             if model.status then
-                if model.time < 60 then
-                    ( { model | time = model.time + 1, message = "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute" }
-                    , Cmd.none
-                    )
-
-                else if model.time >= 60 && model.time < 180 then
-                    ( { model | time = model.time + 1, message = "2: Generate ideas in pairs, building on ideas from self-reflection. 2 minutes" }
+                if model.time >= 60 && model.time < 180 then
+                    ( { model | time = model.time + 1, phase = "Two" }
                     , Cmd.none
                     )
 
                 else if model.time >= 180 && model.time < 420 then
-                    ( { model | time = model.time + 1, message = "4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes" }
+                    ( { model | time = model.time + 1, phase = "Four" }
                     , Cmd.none
                     )
 
                 else if model.time >= 420 then
-                    ( { model | time = model.time + 1, message = "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes" }
+                    ( { model | time = model.time + 1, phase = "All" }
                     , Cmd.none
                     )
 
@@ -92,7 +87,7 @@ update msg model =
                 )
 
         Start ->
-            ( { model | status = True }, Cmd.none )
+            ( { model | status = True, phase = "One" }, Cmd.none )
 
         Stop ->
             ( { model | status = False }, Cmd.none )
@@ -123,8 +118,66 @@ view model =
             [ text (String.fromInt model.time) ]
         , h3
             []
-            [ text model.message ]
+            [ phaseText model.phase ]
+        , p [] [ text model.phase ]
         ]
+
+
+phaseText phase =
+    case phase of
+        "Ready" ->
+            div []
+                [ p []
+                    [ text
+                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute"
+                    ]
+                , p []
+                    [ text
+                        "2: Generate ideas in pairs, building on ideas from self-reflection. 2 minute"
+                    ]
+                , p []
+                    [ text
+                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes"
+                    ]
+                , p []
+                    [ text
+                        "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes"
+                    ]
+                ]
+
+        "One" ->
+            div []
+                [ p []
+                    [ text
+                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute"
+                    ]
+                ]
+
+        "Two" ->
+            div []
+                [ p []
+                    [ text
+                        "2: Generate ideas in pairs, building on ideas from self-reflection. 2 minute"
+                    ]
+                ]
+
+        "Four" ->
+            div []
+                [ p []
+                    [ text
+                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes"
+                    ]
+                ]
+
+        "All" ->
+            div []
+                [ p []
+                    [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes"
+                    ]
+                ]
+
+        _ ->
+            div [] [ p [] [ text "This should not ever be seen" ] ]
 
 
 
