@@ -131,53 +131,49 @@ phaseText phase =
     case phase of
         "Ready" ->
             div []
-                [ p []
-                    [ text
-                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute"
-                    ]
-                , p []
-                    [ text
-                        "2: Generate ideas in pairs, building on ideas from self-reflection. 2 minute"
-                    ]
-                , p []
-                    [ text
-                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes"
-                    ]
-                , p []
-                    [ text
-                        "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes"
-                    ]
+                [ hr [] []
+                , phaseText "One"
+                , hr [] []
+                , phaseText "Two"
+                , hr [] []
+                , phaseText "Four"
+                , hr [] []
+                , phaseText "All"
                 ]
 
         "One" ->
             div []
                 [ p []
                     [ text
-                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute"
+                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?)"
                     ]
+                , p [] [ text "(1 minute)" ]
                 ]
 
         "Two" ->
             div []
                 [ p []
                     [ text
-                        "2: Generate ideas in pairs, building on ideas from self-reflection. 2 minute"
+                        "2: Generate ideas in pairs, building on ideas from self-reflection."
                     ]
+                , p [] [ text "(2 Minutes)" ]
                 ]
 
         "Four" ->
             div []
                 [ p []
                     [ text
-                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes"
+                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences)."
                     ]
+                , p [] [ text "(4 minutes)" ]
                 ]
 
         "All" ->
             div []
                 [ p []
-                    [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes"
+                    [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all."
                     ]
+                , p [] [ text "(5 minutes)  repeat as needed" ]
                 ]
 
         _ ->
