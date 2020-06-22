@@ -27,20 +27,13 @@ main =
 type alias Model =
     { time : Int
     , status : Bool
-    , message : String
     , phase : String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { time = 0, status = False, message = """
-        1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?) 1 minute
-        2: Generate ideas in pairs, building on ideas from self-reflection. 2 minutes
-        4: Share and develop ideas from your pair in foursomes (notice similarities and differences). 4 minutes
-        All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all (repeat cycle as needed). 5 minutes
-
-        """, phase = "Ready" }, Cmd.none )
+    ( { time = 0, status = False, phase = "Ready" }, Cmd.none )
 
 
 
