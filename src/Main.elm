@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (..)
+import Html exposing (Html, div, h1, h2, hr, p, button, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import Time
@@ -10,7 +10,7 @@ import Time
 
 -- MAIN
 
-
+main : Program () Model Msg
 main =
     Browser.element
         { init = init
@@ -92,7 +92,7 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Time.every 1000 Tick
 
 
@@ -119,7 +119,7 @@ view model =
             [ phaseText model.phase ]
         ]
 
-
+phaseText : String -> (Html Msg)
 phaseText phase =
     case phase of
         "Ready" ->
@@ -172,16 +172,15 @@ phaseText phase =
         _ ->
             div [] [ p [] [ text "This should not ever be seen" ] ]
 
-
+statusButtons : Bool -> List (Html Msg)
 statusButtons status =
-    case status of
-        True ->
-            [ button [ onClick Stop ] [ text "Stop" ]
-            ]
+    if status then
+        [ button [ onClick Stop ] [ text "Stop" ]
+        ]
 
-        False ->
-            [ button [ onClick Start ] [ text "Start" ]
-            ]
+    else
+        [ button [ onClick Start ] [ text "Start" ]
+        ]
 
 
 
