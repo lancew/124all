@@ -113,7 +113,7 @@ view model =
                 , padding 5
                 ]
                 [ statusButtons model.status ]
-            , row [ Border.width 2, Border.rounded 2 ] [ phaseText model.phase ]
+            , row [] [ phaseText model.phase ]
             , footer
             ]
 

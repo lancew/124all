@@ -12121,11 +12121,7 @@ var $author$project$Main$view = function (model) {
 						])),
 					A2(
 					$mdgriffith$elm_ui$Element$row,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$Border$width(2),
-							$mdgriffith$elm_ui$Element$Border$rounded(2)
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							$author$project$Main$phaseText(model.phase)
