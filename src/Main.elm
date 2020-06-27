@@ -1,14 +1,16 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, div, h1, h2, hr, p, button, text)
-import Html.Attributes exposing (style)
-import Html.Events exposing (onClick)
+import Element exposing (alignRight, centerX, column, el, fill, fillPortion, height, layout, padding, paragraph, row, spacing, text, width)
+import Element.Border as Border
+import Element.Font as Font
+import Element.Input as Input
 import Time
 
 
 
 -- MAIN
+
 
 main : Program () Model Msg
 main =
@@ -100,86 +102,82 @@ subscriptions _ =
 -- VIEW
 
 
-view : Model -> Html Msg
 view model =
-    div []
-        [ h1
-            [ style "background-color"
-                (if model.status then
-                    "Green"
-
-                 else
-                    ""
-                )
+    Element.layout [ width fill, height fill ] <|
+        column
+            [ width fill ]
+            [ header
+            , row
+                [ Border.width 2
+                , Border.rounded 6
+                , padding 5
+                ]
+                [ statusButtons model.status ]
+            , row [] [ phaseText model.phase ]
+            , footer
             ]
-            [ text "1-2-4-All Timer" ]
-        , div [] (statusButtons model.status)
-        , h2
-            []
-            [ phaseText model.phase ]
+
+
+header =
+    row [ centerX, padding 20 ]
+        [ el [ Font.size 48, Font.center, Font.bold ] <| text "1-2-4-All Timer"
         ]
 
-phaseText : String -> (Html Msg)
+
 phaseText phase =
     case phase of
         "Ready" ->
-            div []
-                [ hr [] []
-                , phaseText "One"
-                , hr [] []
-                , phaseText "Two"
-                , hr [] []
-                , phaseText "Four"
-                , hr [] []
-                , phaseText "All"
+            column [ width fill ]
+                [ row [ width fill ] [ phaseText "One" ]
+                , row [ width fill ] [ phaseText "Two" ]
+                , row [ width fill ] [ phaseText "Four" ]
+                , row [ width fill ] [ phaseText "All" ]
                 ]
 
         "One" ->
-            div []
-                [ p []
-                    [ text
-                        "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?)"
-                    ]
-                , p [] [ text "(1 minute)" ]
+            row [ width fill ]
+                [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?)" ] ]
+                , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(1 minute)" ] ]
                 ]
 
         "Two" ->
-            div []
-                [ p []
-                    [ text
-                        "2: Generate ideas in pairs, building on ideas from self-reflection."
-                    ]
-                , p [] [ text "(2 Minutes)" ]
+            row [ width fill ]
+                [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "2: Generate ideas in pairs, building on ideas from self-reflection." ] ]
+                , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(2 Minutes)" ] ]
                 ]
 
         "Four" ->
-            div []
-                [ p []
-                    [ text
-                        "4: Share and develop ideas from your pair in foursomes (notice similarities and differences)."
+            row [ width fill ]
+                [ column [ width (fillPortion 5) ]
+                    [ paragraph [ width fill, padding 20, padding 20 ]
+                        [ text
+                            "4: Share and develop ideas from your pair in foursomes (notice similarities and differences)."
+                        ]
                     ]
-                , p [] [ text "(4 minutes)" ]
+                , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(4 minutes)" ] ]
                 ]
 
         "All" ->
-            div []
-                [ p []
-                    [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all."
-                    ]
-                , p [] [ text "(5 minutes)  repeat as needed" ]
+            row [ width fill ]
+                [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all." ] ]
+                , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(5 minutes)  repeat as needed" ] ]
                 ]
 
         _ ->
-            div [] [ p [] [ text "This should not ever be seen" ] ]
+            row [] [ el [] (text "Something went wrong") ]
 
-statusButtons : Bool -> List (Html Msg)
+
 statusButtons status =
     if status then
-        [ button [ onClick Stop ] [ text "Stop" ]
-        ]
+        Input.button [] { onPress = Just Stop, label = text "Stop" }
 
     else
-        [ button [ onClick Start ] [ text "Start" ]
+        Input.button [] { onPress = Just Start, label = text "Start" }
+
+
+footer =
+    row [ width fill, padding 20, spacing 20 ]
+        [ el [ alignRight ] <| text "By Lance Wicks: https://github.com/lancew/124all"
         ]
 
 
