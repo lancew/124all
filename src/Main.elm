@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Element exposing (alignRight, centerX, column, el, fill, fillPortion, height, layout, padding, paragraph, row, spacing, text, width)
+import Element exposing (alignRight, centerX, column, el, link,fill, fillPortion, height, layout, padding, paragraph, rgb255, row, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
@@ -103,7 +104,7 @@ subscriptions _ =
 
 
 view model =
-    Element.layout [ width fill, height fill ] <|
+    Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ rgb255 167 180 193, rgb255 255 255 255 ] } ] <|
         column
             [ width fill ]
             [ header
@@ -177,7 +178,7 @@ statusButtons status =
 
 footer =
     row [ width fill, padding 20, spacing 20 ]
-        [ el [ alignRight ] <| text "By Lance Wicks: https://github.com/lancew/124all"
+        [ link [ alignRight ]  { url = "https://github.com/lancew/124all",label = text "By Lance Wicks: https://github.com/lancew/124all"}
         ]
 
 
