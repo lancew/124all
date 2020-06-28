@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Html
 import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -102,7 +103,7 @@ subscriptions _ =
 
 -- VIEW
 
-
+view : Model -> Html.Html Msg
 view model =
     Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ rgb255 167 180 193, rgb255 255 255 255 ] } ] <|
         column
@@ -112,7 +113,6 @@ view model =
                 [ Border.width 2
                 , Border.rounded 6
                 , padding 10
-                
                 , centerX
                 ]
                 [ statusButtons model.status ]
@@ -121,12 +121,14 @@ view model =
             ]
 
 
+header : Element.Element Msg
 header =
     row [ centerX, padding 20 ]
         [ el [ Font.size 48, Font.center, Font.bold ] <| text "1-2-4-All Timer"
         ]
 
 
+phaseText : String -> Element.Element Msg
 phaseText phase =
     case phase of
         "Ready" ->
@@ -170,6 +172,7 @@ phaseText phase =
             row [] [ el [] (text "Something went wrong") ]
 
 
+statusButtons : Bool -> Element.Element Msg
 statusButtons status =
     if status then
         Input.button [] { onPress = Just Stop, label = text "Stop" }
@@ -178,6 +181,7 @@ statusButtons status =
         Input.button [] { onPress = Just Start, label = text "Start" }
 
 
+footer : Element.Element Msg
 footer =
     row [ padding 20, spacing 20, width fill, Border.width 1, Border.dotted, Border.rounded 6 ]
         [ column [ width (fillPortion 3) ] [ link [ alignLeft ] { url = "https://lancew.github.io/124all/", label = text "https://lancew.github.io/124all/" } ]
