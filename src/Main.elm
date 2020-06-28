@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser
-import Element exposing (alignRight, centerX, column, el, link,fill, fillPortion, height, layout, padding, paragraph, rgb255, row, spacing, text, width)
+import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -111,7 +111,9 @@ view model =
             , row
                 [ Border.width 2
                 , Border.rounded 6
-                , padding 5
+                , padding 10
+                
+                , centerX
                 ]
                 [ statusButtons model.status ]
             , row [] [ phaseText model.phase ]
@@ -177,8 +179,13 @@ statusButtons status =
 
 
 footer =
-    row [ width fill, padding 20, spacing 20 ]
-        [ link [ alignRight ]  { url = "https://github.com/lancew/124all",label = text "By Lance Wicks: https://github.com/lancew/124all"}
+    row [ padding 20, spacing 20, width fill, Border.width 1, Border.dotted, Border.rounded 6 ]
+        [ column [ width (fillPortion 3) ] [ link [ alignLeft ] { url = "https://lancew.github.io/124all/", label = text "https://lancew.github.io/124all/" } ]
+        , column [ width (fillPortion 1) ]
+            [ link [ alignRight ] { url = "https://github.com/lancew/124all", label = text "By Lance Wicks: https://github.com/lancew/124all" }
+            , link [ alignRight ] { url = "http://www.liberatingstructures.com/1-1-2-4-all/", label = text "Based on ideas in Liberating Structures" }
+            , link [ alignRight ] { url = "https://toolbox.hyperisland.com/1-2-4-all", label = text "and Hyper Island" }
+            ]
         ]
 
 
