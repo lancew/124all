@@ -5231,7 +5231,7 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{phase: 'Ready', status: false, time: 0},
+		{next: 'One', phase: 'Ready', status: false, timer: 60},
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
@@ -5655,44 +5655,124 @@ var $elm$time$Time$every = F2(
 var $author$project$Main$subscriptions = function (_v0) {
 	return A2($elm$time$Time$every, 1000, $author$project$Main$Tick);
 };
-var $elm$core$Basics$ge = _Utils_ge;
+var $author$project$Main$PhaseAll = {$: 'PhaseAll'};
+var $author$project$Main$PhaseFour = {$: 'PhaseFour'};
+var $author$project$Main$PhaseOne = {$: 'PhaseOne'};
+var $author$project$Main$PhaseTwo = {$: 'PhaseTwo'};
+var $ccapndave$elm_update_extra$Update$Extra$andThen = F3(
+	function (update, msg, _v0) {
+		var model = _v0.a;
+		var cmd = _v0.b;
+		var _v1 = A2(update, msg, model);
+		var model_ = _v1.a;
+		var cmd_ = _v1.b;
+		return _Utils_Tuple2(
+			model_,
+			$elm$core$Platform$Cmd$batch(
+				_List_fromArray(
+					[cmd, cmd_])));
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'Tick':
-				return model.status ? (((model.time >= 60) && (model.time < 180)) ? _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{phase: 'Two', time: model.time + 1}),
-					$elm$core$Platform$Cmd$none) : (((model.time >= 180) && (model.time < 420)) ? _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{phase: 'Four', time: model.time + 1}),
-					$elm$core$Platform$Cmd$none) : ((model.time >= 420) ? _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{phase: 'All', time: model.time + 1}),
-					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{time: model.time + 1}),
-					$elm$core$Platform$Cmd$none)))) : _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{time: model.time + 0}),
-					$elm$core$Platform$Cmd$none);
 			case 'Start':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{phase: 'One', status: true}),
-					$elm$core$Platform$Cmd$none);
-			default:
+				return A3(
+					$ccapndave$elm_update_extra$Update$Extra$andThen,
+					$author$project$Main$update,
+					$author$project$Main$PhaseOne,
+					_Utils_Tuple2(
+						_Utils_update(
+							model,
+							{status: true}),
+						$elm$core$Platform$Cmd$none));
+			case 'Stop':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{status: false}),
 					$elm$core$Platform$Cmd$none);
+			case 'Restart':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{status: true}),
+					$elm$core$Platform$Cmd$none);
+			case 'PhaseOne':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{next: 'Two', phase: 'One', timer: 60}),
+					$elm$core$Platform$Cmd$none);
+			case 'PhaseTwo':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{next: 'Four', phase: 'Two', timer: 120}),
+					$elm$core$Platform$Cmd$none);
+			case 'PhaseFour':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{next: 'All', phase: 'Four', timer: 240}),
+					$elm$core$Platform$Cmd$none);
+			case 'PhaseAll':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{next: 'All', phase: 'All', timer: 300}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				if (model.status) {
+					if (model.timer > 0) {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{timer: model.timer - 1}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						var _v1 = model.next;
+						switch (_v1) {
+							case 'Two':
+								return A3(
+									$ccapndave$elm_update_extra$Update$Extra$andThen,
+									$author$project$Main$update,
+									$author$project$Main$PhaseTwo,
+									_Utils_Tuple2(
+										_Utils_update(
+											model,
+											{timer: 1}),
+										$elm$core$Platform$Cmd$none));
+							case 'Four':
+								return A3(
+									$ccapndave$elm_update_extra$Update$Extra$andThen,
+									$author$project$Main$update,
+									$author$project$Main$PhaseFour,
+									_Utils_Tuple2(
+										_Utils_update(
+											model,
+											{timer: 1}),
+										$elm$core$Platform$Cmd$none));
+							case 'All':
+								return A3(
+									$ccapndave$elm_update_extra$Update$Extra$andThen,
+									$author$project$Main$update,
+									$author$project$Main$PhaseAll,
+									_Utils_Tuple2(
+										_Utils_update(
+											model,
+											{timer: 1}),
+										$elm$core$Platform$Cmd$none));
+							default:
+								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					}
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{timer: model.timer - 0}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
@@ -10223,6 +10303,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderWidth = function (w) {
 	}
 };
 var $mdgriffith$elm_ui$Internal$Flag$borderWidth = $mdgriffith$elm_ui$Internal$Flag$flag(27);
+var $elm$core$Basics$ge = _Utils_ge;
 var $mdgriffith$elm_ui$Internal$Model$skippable = F2(
 	function (flag, style) {
 		if (_Utils_eq(flag, $mdgriffith$elm_ui$Internal$Flag$borderWidth)) {
@@ -11191,6 +11272,23 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $mdgriffith$elm_ui$Element$el = F2(
+	function (attrs, child) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+					attrs)),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[child])));
+	});
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
@@ -11461,23 +11559,6 @@ var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Fl
 var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
 var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
 var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textCenter);
-var $mdgriffith$elm_ui$Element$el = F2(
-	function (attrs, child) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-					attrs)),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[child])));
-	});
 var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
 	return {$: 'FontSize', a: a};
 };
@@ -12071,6 +12152,7 @@ var $mdgriffith$elm_ui$Element$rgb255 = F3(
 	function (red, green, blue) {
 		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
 	});
+var $author$project$Main$Restart = {$: 'Restart'};
 var $author$project$Main$Start = {$: 'Start'};
 var $author$project$Main$Stop = {$: 'Stop'};
 var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
@@ -12211,20 +12293,26 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 				_List_fromArray(
 					[label])));
 	});
-var $author$project$Main$statusButtons = function (status) {
-	return status ? A2(
+var $author$project$Main$statusButtons = function (model) {
+	return model.status ? A2(
 		$mdgriffith$elm_ui$Element$Input$button,
 		_List_Nil,
 		{
 			label: $mdgriffith$elm_ui$Element$text('Stop'),
 			onPress: $elm$core$Maybe$Just($author$project$Main$Stop)
-		}) : A2(
+		}) : ((model.phase === 'Ready') ? A2(
 		$mdgriffith$elm_ui$Element$Input$button,
 		_List_Nil,
 		{
 			label: $mdgriffith$elm_ui$Element$text('Start'),
 			onPress: $elm$core$Maybe$Just($author$project$Main$Start)
-		});
+		}) : A2(
+		$mdgriffith$elm_ui$Element$Input$button,
+		_List_Nil,
+		{
+			label: $mdgriffith$elm_ui$Element$text('Start'),
+			onPress: $elm$core$Maybe$Just($author$project$Main$Restart)
+		}));
 };
 var $author$project$Main$view = function (model) {
 	return A2(
@@ -12257,6 +12345,28 @@ var $author$project$Main$view = function (model) {
 					$mdgriffith$elm_ui$Element$row,
 					_List_fromArray(
 						[
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$Font$size(32),
+							$mdgriffith$elm_ui$Element$Border$width(2),
+							$mdgriffith$elm_ui$Element$Border$rounded(6),
+							$mdgriffith$elm_ui$Element$padding(10)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_Nil,
+							$mdgriffith$elm_ui$Element$text('Seconds: ')),
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_Nil,
+							$mdgriffith$elm_ui$Element$text(
+								$elm$core$String$fromInt(model.timer)))
+						])),
+					A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
 							$mdgriffith$elm_ui$Element$Border$width(2),
 							$mdgriffith$elm_ui$Element$Border$rounded(6),
 							$mdgriffith$elm_ui$Element$padding(10),
@@ -12264,7 +12374,7 @@ var $author$project$Main$view = function (model) {
 						]),
 					_List_fromArray(
 						[
-							$author$project$Main$statusButtons(model.status)
+							$author$project$Main$statusButtons(model)
 						])),
 					A2(
 					$mdgriffith$elm_ui$Element$row,

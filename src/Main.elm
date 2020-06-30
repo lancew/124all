@@ -1,13 +1,14 @@
 module Main exposing (main)
 
 import Browser
-import Html
 import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html
 import Time
+import Update.Extra as Update
 
 
 
@@ -29,15 +30,16 @@ main =
 
 
 type alias Model =
-    { time : Int
+    { timer : Int
     , status : Bool
     , phase : String
+    , next : String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { time = 0, status = False, phase = "Ready" }, Cmd.none )
+    ( { timer = 60, status = False, next = "One", phase = "Ready" }, Cmd.none )
 
 
 
@@ -48,47 +50,60 @@ type Msg
     = Tick Time.Posix
     | Start
     | Stop
+    | PhaseOne
+    | PhaseTwo
+    | PhaseFour
+    | PhaseAll
+    | Restart
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- 60  1 min
-        -- 180 2 min (1+2)
-        -- 420 4 mins
-        --     All
-        Tick _ ->
-            if model.status then
-                if model.time >= 60 && model.time < 180 then
-                    ( { model | time = model.time + 1, phase = "Two" }
-                    , Cmd.none
-                    )
-
-                else if model.time >= 180 && model.time < 420 then
-                    ( { model | time = model.time + 1, phase = "Four" }
-                    , Cmd.none
-                    )
-
-                else if model.time >= 420 then
-                    ( { model | time = model.time + 1, phase = "All" }
-                    , Cmd.none
-                    )
-
-                else
-                    ( { model | time = model.time + 1 }
-                    , Cmd.none
-                    )
-
-            else
-                ( { model | time = model.time + 0 }
-                , Cmd.none
-                )
-
         Start ->
-            ( { model | status = True, phase = "One" }, Cmd.none )
+            ( { model | status = True }, Cmd.none ) |> Update.andThen update PhaseOne
 
         Stop ->
             ( { model | status = False }, Cmd.none )
+
+        Restart ->
+            ( { model | status = True }, Cmd.none )
+
+        PhaseOne ->
+            ( { model | phase = "One", next = "Two", timer = 60 }, Cmd.none )
+
+        PhaseTwo ->
+            ( { model | phase = "Two", next = "Four", timer = 120 }, Cmd.none )
+
+        PhaseFour ->
+            ( { model | phase = "Four", next = "All", timer = 240 }, Cmd.none )
+
+        PhaseAll ->
+            ( { model | phase = "All", next = "All", timer = 300 }, Cmd.none )
+
+        Tick _ ->
+            if model.status then
+                if model.timer > 0 then
+                    ( { model | timer = model.timer - 1 }, Cmd.none )
+
+                else
+                    case model.next of
+                        "Two" ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseTwo
+
+                        "Four" ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseFour
+
+                        "All" ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseAll
+
+                        _ ->
+                            ( model, Cmd.none )
+
+            else
+                ( { model | timer = model.timer - 0 }
+                , Cmd.none
+                )
 
 
 
@@ -103,19 +118,24 @@ subscriptions _ =
 
 -- VIEW
 
+
 view : Model -> Html.Html Msg
 view model =
     Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ rgb255 167 180 193, rgb255 255 255 255 ] } ] <|
         column
             [ width fill ]
             [ header
+            , row [ centerX, Font.size 32, Border.width 2, Border.rounded 6, padding 10 ]
+                [ el [] (text "Seconds: ")
+                , el [] (text (String.fromInt model.timer))
+                ]
             , row
                 [ Border.width 2
                 , Border.rounded 6
                 , padding 10
                 , centerX
                 ]
-                [ statusButtons model.status ]
+                [ statusButtons model ]
             , row [] [ phaseText model.phase ]
             , footer
             ]
@@ -172,13 +192,16 @@ phaseText phase =
             row [] [ el [] (text "Something went wrong") ]
 
 
-statusButtons : Bool -> Element.Element Msg
-statusButtons status =
-    if status then
+statusButtons : Model -> Element.Element Msg
+statusButtons model =
+    if model.status then
         Input.button [] { onPress = Just Stop, label = text "Stop" }
 
-    else
+    else if model.phase == "Ready" then
         Input.button [] { onPress = Just Start, label = text "Start" }
+
+    else
+        Input.button [] { onPress = Just Restart, label = text "Start" }
 
 
 footer : Element.Element Msg
