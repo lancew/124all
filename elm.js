@@ -5775,6 +5775,16 @@ var $author$project$Main$update = F2(
 				}
 		}
 	});
+var $jxxcarlson$elm_typed_time$TypedTime$Seconds = {$: 'Seconds'};
+var $mdgriffith$elm_ui$Internal$Model$Rgba = F4(
+	function (a, b, c, d) {
+		return {$: 'Rgba', a: a, b: b, c: c, d: d};
+	});
+var $mdgriffith$elm_ui$Element$rgb255 = F3(
+	function (red, green, blue) {
+		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
+	});
+var $phollyer$elm_ui_colors$Color$Blue$aliceblue = A3($mdgriffith$elm_ui$Element$rgb255, 240, 248, 255);
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
 };
@@ -11598,10 +11608,6 @@ var $mdgriffith$elm_ui$Internal$Model$StaticRootAndDynamic = F2(
 	});
 var $mdgriffith$elm_ui$Internal$Model$AllowHover = {$: 'AllowHover'};
 var $mdgriffith$elm_ui$Internal$Model$Layout = {$: 'Layout'};
-var $mdgriffith$elm_ui$Internal$Model$Rgba = F4(
-	function (a, b, c, d) {
-		return {$: 'Rgba', a: a, b: b, c: c, d: d};
-	});
 var $mdgriffith$elm_ui$Internal$Model$focusDefaultStyle = {
 	backgroundColor: $elm$core$Maybe$Nothing,
 	borderColor: $elm$core$Maybe$Nothing,
@@ -12148,10 +12154,13 @@ var $author$project$Main$phaseText = function (phase) {
 					]));
 	}
 };
-var $mdgriffith$elm_ui$Element$rgb255 = F3(
-	function (red, green, blue) {
-		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
+var $jxxcarlson$elm_typed_time$TypedTime$TypedTime = F2(
+	function (a, b) {
+		return {$: 'TypedTime', a: a, b: b};
 	});
+var $jxxcarlson$elm_typed_time$TypedTime$seconds = function (t) {
+	return A2($jxxcarlson$elm_typed_time$TypedTime$TypedTime, $jxxcarlson$elm_typed_time$TypedTime$Seconds, 1000 * t);
+};
 var $author$project$Main$Restart = {$: 'Restart'};
 var $author$project$Main$Start = {$: 'Start'};
 var $author$project$Main$Stop = {$: 'Stop'};
@@ -12314,6 +12323,91 @@ var $author$project$Main$statusButtons = function (model) {
 			onPress: $elm$core$Maybe$Just($author$project$Main$Restart)
 		}));
 };
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $jxxcarlson$elm_typed_time$TypedTime$hmRecordFromSeconds = function (s) {
+	var m1 = $elm$core$Basics$round(s / 60);
+	var m2 = A2($elm$core$Basics$modBy, 60, m1);
+	var h1 = (m1 / 60) | 0;
+	return {hours: h1, minutes: m2};
+};
+var $elm$core$String$cons = _String_cons;
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var $elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			$elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var $elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3($elm$core$String$repeatHelp, n, chunk, '');
+	});
+var $elm$core$String$padLeft = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			A2(
+				$elm$core$String$repeat,
+				n - $elm$core$String$length(string),
+				$elm$core$String$fromChar(_char)),
+			string);
+	});
+var $jxxcarlson$elm_typed_time$TypedTime$hmStringFromSeconds = function (s) {
+	var tr = $jxxcarlson$elm_typed_time$TypedTime$hmRecordFromSeconds(s);
+	return A3(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		$elm$core$String$fromInt(tr.hours)) + (':' + A3(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		$elm$core$String$fromInt(tr.minutes)));
+};
+var $jxxcarlson$elm_typed_time$TypedTime$hmsRecordFromSeconds = function (s) {
+	var s1 = $elm$core$Basics$round(s);
+	var s2 = A2($elm$core$Basics$modBy, 60, s1);
+	var m1 = (s1 / 60) | 0;
+	var m2 = A2($elm$core$Basics$modBy, 60, m1);
+	var h1 = (m1 / 60) | 0;
+	return {hours: h1, minutes: m2, seconds: s2};
+};
+var $jxxcarlson$elm_typed_time$TypedTime$hmsStringFromSeconds = function (s) {
+	var tr = $jxxcarlson$elm_typed_time$TypedTime$hmsRecordFromSeconds(s);
+	return A3(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		$elm$core$String$fromInt(tr.hours)) + (':' + (A3(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		$elm$core$String$fromInt(tr.minutes)) + (':' + A3(
+		$elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		$elm$core$String$fromInt(tr.seconds)))));
+};
+var $jxxcarlson$elm_typed_time$TypedTime$toString = F2(
+	function (u, _v0) {
+		var unit_ = _v0.a;
+		var value = _v0.b;
+		switch (u.$) {
+			case 'Milliseconds':
+				return $jxxcarlson$elm_typed_time$TypedTime$hmsStringFromSeconds(value / 1000);
+			case 'Seconds':
+				return $jxxcarlson$elm_typed_time$TypedTime$hmsStringFromSeconds(value / 1000);
+			case 'Minutes':
+				return $jxxcarlson$elm_typed_time$TypedTime$hmStringFromSeconds(value / 1000);
+			default:
+				return $jxxcarlson$elm_typed_time$TypedTime$hmStringFromSeconds(value / 1000);
+		}
+	});
+var $phollyer$elm_ui_colors$Color$White$whitesmoke = A3($mdgriffith$elm_ui$Element$rgb255, 245, 245, 245);
 var $author$project$Main$view = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$layout,
@@ -12326,10 +12420,7 @@ var $author$project$Main$view = function (model) {
 				{
 					angle: 0,
 					steps: _List_fromArray(
-						[
-							A3($mdgriffith$elm_ui$Element$rgb255, 167, 180, 193),
-							A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255)
-						])
+						[$phollyer$elm_ui_colors$Color$White$whitesmoke, $phollyer$elm_ui_colors$Color$Blue$aliceblue])
 				})
 			]),
 		A2(
@@ -12356,12 +12447,11 @@ var $author$project$Main$view = function (model) {
 							A2(
 							$mdgriffith$elm_ui$Element$el,
 							_List_Nil,
-							$mdgriffith$elm_ui$Element$text('Seconds: ')),
-							A2(
-							$mdgriffith$elm_ui$Element$el,
-							_List_Nil,
 							$mdgriffith$elm_ui$Element$text(
-								$elm$core$String$fromInt(model.timer)))
+								A2(
+									$jxxcarlson$elm_typed_time$TypedTime$toString,
+									$jxxcarlson$elm_typed_time$TypedTime$Seconds,
+									$jxxcarlson$elm_typed_time$TypedTime$seconds(model.timer))))
 						])),
 					A2(
 					$mdgriffith$elm_ui$Element$row,

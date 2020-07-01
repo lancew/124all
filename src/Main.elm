@@ -1,13 +1,16 @@
 module Main exposing (main)
 
 import Browser
-import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, rgb255, row, spacing, text, width)
+import Color.Blue
+import Color.White
+import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html
 import Time
+import TypedTime
 import Update.Extra as Update
 
 
@@ -121,13 +124,12 @@ subscriptions _ =
 
 view : Model -> Html.Html Msg
 view model =
-    Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ rgb255 167 180 193, rgb255 255 255 255 ] } ] <|
+    Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ Color.White.whitesmoke, Color.Blue.aliceblue ] } ] <|
         column
             [ width fill ]
             [ header
             , row [ centerX, Font.size 32, Border.width 2, Border.rounded 6, padding 10 ]
-                [ el [] (text "Seconds: ")
-                , el [] (text (String.fromInt model.timer))
+                [ el [] (text (TypedTime.toString TypedTime.Seconds (TypedTime.seconds (toFloat model.timer))))
                 ]
             , row
                 [ Border.width 2
