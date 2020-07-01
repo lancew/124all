@@ -1,7 +1,6 @@
 module Main exposing (main)
 
 import Browser
-import Color.Blue
 import Color.White
 import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, row, spacing, text, width)
 import Element.Background as Background
@@ -124,13 +123,14 @@ subscriptions _ =
 
 view : Model -> Html.Html Msg
 view model =
-    Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ Color.White.whitesmoke, Color.Blue.aliceblue ] } ] <|
+    Element.layout [ width fill, height fill, padding 10, Background.gradient { angle = 0, steps = [ Color.White.seashell, Color.White.whitesmoke ] } ] <|
         column
             [ width fill ]
             [ header
             , row [ centerX, Font.size 32, Border.width 2, Border.rounded 6, padding 10 ]
                 [ el [] (text (TypedTime.toString TypedTime.Seconds (TypedTime.seconds (toFloat model.timer))))
                 ]
+            , row [ padding 5 ] []
             , row
                 [ Border.width 2
                 , Border.rounded 6
