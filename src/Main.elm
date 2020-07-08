@@ -34,28 +34,33 @@ main =
 type alias Model =
     { timer : Int
     , status : Bool
-    , phase : String
-    , next : String
+    , phase : Phase
+    , next : Phase
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { timer = 60, status = False, next = "One", phase = "Ready" }, Cmd.none )
+    ( { timer = 60, status = False, next = One, phase = Ready }, Cmd.none )
 
 
 
 -- UPDATE
 
 
+type Phase
+    = One
+    | Two
+    | Four
+    | All
+    | Ready
+
+
 type Msg
     = Tick Time.Posix
     | Start
     | Stop
-    | PhaseOne
-    | PhaseTwo
-    | PhaseFour
-    | PhaseAll
+    | ChangePhase Phase
     | Restart
 
 
@@ -63,7 +68,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ( { model | status = True }, Cmd.none ) |> Update.andThen update PhaseOne
+            ( { model | status = True }, Cmd.none ) |> Update.andThen update (changePhase One)
 
         Stop ->
             ( { model | status = False }, Cmd.none )
@@ -71,17 +76,21 @@ update msg model =
         Restart ->
             ( { model | status = True }, Cmd.none )
 
-        PhaseOne ->
-            ( { model | phase = "One", next = "Two", timer = 60 }, Cmd.none )
+        ChangePhase stage ->
+            case stage of
+                One ->
+                    ( { model | phase = One, next = Two, timer = 60 }, Cmd.none )
 
-        PhaseTwo ->
-            ( { model | phase = "Two", next = "Four", timer = 120 }, Cmd.none )
+                Two ->
+                    ( { model | phase = Two, next = Four, timer = 120 }, Cmd.none )
 
-        PhaseFour ->
-            ( { model | phase = "Four", next = "All", timer = 240 }, Cmd.none )
+                Four ->
+                    ( { model | phase = Four, next = All, timer = 240 }, Cmd.none )
 
-        PhaseAll ->
-            ( { model | phase = "All", next = "All", timer = 300 }, Cmd.none )
+                All ->
+                    ( { model | phase = All, next = All, timer = 300 }, Cmd.none )
+
+                Ready -> (model, Cmd.none)    
 
         Tick _ ->
             if model.status then
@@ -90,14 +99,14 @@ update msg model =
 
                 else
                     case model.next of
-                        "Two" ->
-                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseTwo
+                        Two ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update (changePhase Two)
 
-                        "Four" ->
-                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseFour
+                        Four ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update (changePhase Four)
 
-                        "All" ->
-                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update PhaseAll
+                        All ->
+                            ( { model | timer = 1 }, Cmd.none ) |> Update.andThen update (changePhase All)
 
                         _ ->
                             ( model, Cmd.none )
@@ -106,6 +115,23 @@ update msg model =
                 ( { model | timer = model.timer - 0 }
                 , Cmd.none
                 )
+
+
+changePhase stage =
+    case stage of
+        One ->
+            ChangePhase One
+
+        Two ->
+            ChangePhase Two
+
+        Four ->
+            ChangePhase Four
+
+        All ->
+            ChangePhase All
+
+        Ready -> ChangePhase Ready    
 
 
 
@@ -150,30 +176,30 @@ header =
         ]
 
 
-phaseText : String -> Element.Element Msg
+phaseText : Phase -> Element.Element Msg
 phaseText phase =
     case phase of
-        "Ready" ->
+        Ready ->
             column [ width fill ]
-                [ row [ width fill ] [ phaseText "One" ]
-                , row [ width fill ] [ phaseText "Two" ]
-                , row [ width fill ] [ phaseText "Four" ]
-                , row [ width fill ] [ phaseText "All" ]
+                [ row [ width fill ] [ phaseText One ]
+                , row [ width fill ] [ phaseText Two ]
+                , row [ width fill ] [ phaseText Four ]
+                , row [ width fill ] [ phaseText All ]
                 ]
 
-        "One" ->
+        One ->
             row [ width fill ]
                 [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "1 : Silent self-reflection by individuals on a shared challenge, framed as a question (e.g., What opportunities do YOU see for making progress on this challenge? How would you handle this situation? What ideas or actions do you recommend?)" ] ]
                 , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(1 minute)" ] ]
                 ]
 
-        "Two" ->
+        Two ->
             row [ width fill ]
                 [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "2: Generate ideas in pairs, building on ideas from self-reflection." ] ]
                 , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(2 Minutes)" ] ]
                 ]
 
-        "Four" ->
+        Four ->
             row [ width fill ]
                 [ column [ width (fillPortion 5) ]
                     [ paragraph [ width fill, padding 20, padding 20 ]
@@ -184,14 +210,11 @@ phaseText phase =
                 , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(4 minutes)" ] ]
                 ]
 
-        "All" ->
+        All ->
             row [ width fill ]
                 [ column [ width (fillPortion 5) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "All: Ask, “What is one idea that stood out in your conversation?” Each group shares one important idea with all." ] ]
                 , column [ width (fillPortion 2) ] [ paragraph [ width fill, padding 20, padding 20 ] [ text "(5 minutes)  repeat as needed" ] ]
                 ]
-
-        _ ->
-            row [] [ el [] (text "Something went wrong") ]
 
 
 statusButtons : Model -> Element.Element Msg
@@ -199,7 +222,7 @@ statusButtons model =
     if model.status then
         Input.button [] { onPress = Just Stop, label = text "Stop" }
 
-    else if model.phase == "Ready" then
+    else if model.phase == Ready then
         Input.button [] { onPress = Just Start, label = text "Start" }
 
     else
