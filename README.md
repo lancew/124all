@@ -8,3 +8,5 @@ Build the javascript:
 ```
 elm make src/Main.elm --output elm.js
 ```
+
+Running elm-review: `elm-review --template jfmengels/elm-review-common/example`

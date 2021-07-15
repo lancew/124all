@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Model, Msg, Phase, main)
 
 import Browser
 import Color.White
