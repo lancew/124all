@@ -113,7 +113,7 @@ update msg model =
                             ( model, Cmd.none )
 
             else
-                ( { model | timer = model.timer - 0 }
+                ( model
                 , Cmd.none
                 )
 

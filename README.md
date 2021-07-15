@@ -9,4 +9,7 @@ Build the javascript:
 elm make src/Main.elm --output elm.js
 ```
 
-Running elm-review: `elm-review --template jfmengels/elm-review-common/example`
+Running elm-review:
+* `elm-review --template jfmengels/elm-review-common/example`
+* `elm-review --template jfmengels/elm-review-cognitive-complexity/preview`
+

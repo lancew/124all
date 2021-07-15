@@ -5791,11 +5791,7 @@ var $author$project$Main$update = F2(
 						}
 					}
 				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{timer: model.timer - 0}),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 		}
 	});
