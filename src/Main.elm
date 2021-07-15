@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Color.White
-import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, layout, link, padding, paragraph, row, spacing, text, width)
+import Element exposing (alignLeft, alignRight, centerX, column, el, fill, fillPortion, height, link, padding, paragraph, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -90,7 +90,8 @@ update msg model =
                 All ->
                     ( { model | phase = All, next = All, timer = 300 }, Cmd.none )
 
-                Ready -> (model, Cmd.none)    
+                Ready ->
+                    ( model, Cmd.none )
 
         Tick _ ->
             if model.status then
@@ -131,7 +132,8 @@ changePhase stage =
         All ->
             ChangePhase All
 
-        Ready -> ChangePhase Ready    
+        Ready ->
+            ChangePhase Ready
 
 
 
